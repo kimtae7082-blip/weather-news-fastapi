@@ -1,0 +1,615 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1424">
+
+  <title>Korea Weather News | 전국 날씨 뉴스</title>
+
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"
+    defer>
+  </script>
+  <script src="/js/selection.js" defer></script>
+</head>
+
+<body>
+
+  <!-- ==========================================
+       1. 상단 헤더
+  ========================================== -->
+  <header class="site-header">
+
+    <div class="header-inner container">
+      <a class="brand" href="/" aria-label="홈으로">
+        <span class="brand-icon">☁</span>
+
+        <span>
+          <strong>KOREA WEATHER NEWS</strong>
+          <small>대한민국 기상 뉴스 포털</small>
+        </span>
+      </a>
+
+      <div class="header-right">
+        <span id="liveStatus" class="live-status">
+          ● 연결 확인 중
+        </span>
+        <span id="currentTime" class="header-time"></span>
+      </div>
+    </div>
+
+    <!-- 상단 메뉴: 4개 -->
+    <nav class="main-nav" aria-label="주 메뉴">
+      <div class="container nav-inner">
+
+        <button
+          class="nav-link active"
+          data-view="home"
+          type="button">
+          홈
+        </button>
+
+        <button
+          class="nav-link"
+          data-view="weather"
+          type="button">
+          전국 날씨
+        </button>
+
+        <button
+          class="nav-link"
+          data-view="events"
+          type="button">
+          기상특보
+        </button>
+
+        <button
+          class="nav-link"
+          data-view="climate"
+          type="button">
+          기후 분석
+        </button>
+
+      </div>
+    </nav>
+
+  </header>
+
+  <!-- ==========================================
+       2. 메인 콘텐츠
+  ========================================== -->
+  <main class="container main-content">
+
+    <!-- 기상 속보 -->
+    <section class="ticker" aria-label="기상 알림">
+      <span class="ticker-label">WEATHER NOW</span>
+
+      <p id="tickerText">
+        전국 기상 정보를 불러오고 있습니다.
+      </p>
+
+      <button
+        id="refreshButton"
+        class="ticker-refresh"
+        type="button">
+        ↻ 새로고침
+      </button>
+    </section>
+
+    <!-- 페이지 제목 및 지역 선택 -->
+    <section class="page-heading">
+
+      <div>
+        <p class="eyebrow">WEATHER INTELLIGENCE</p>
+
+        <h1 id="pageTitle">오늘의 날씨 뉴스</h1>
+
+        <p id="pageDescription">
+          전국 기상 관측 데이터와 지역별 자동 생성 뉴스를 확인하세요.
+        </p>
+      </div>
+
+      <div class="region-control">
+        <label for="regionSelect">조회 지역</label>
+
+        <select id="regionSelect">
+          <option value="">전국 전체</option>
+        </select>
+      </div>
+
+    </section>
+
+    <!-- 로딩 및 오류 -->
+    <div
+      id="loadingBox"
+      class="loading-box hidden"
+      role="status">
+      <span class="spinner"></span>
+      <span>데이터를 불러오는 중입니다...</span>
+    </div>
+
+    <div
+      id="errorBox"
+      class="error-box hidden"
+      role="alert">
+    </div>
+
+ 
+<!-- ====================================== -->
+<!-- 홈 화면 시작 -->
+<!-- ====================================== -->
+<section id="homeView" class="view">
+
+  <!-- ====================================== -->
+  <!-- 1. 오늘의 날씨 영역 -->
+  <!-- ====================================== -->
+  <section class="panel today-weather-panel">
+
+    <!-- 오늘의 날씨 제목 -->
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">TODAY'S WEATHER</p>
+        <h2>오늘의 날씨</h2>
+
+        <p class="section-note">
+          최신 관측 데이터와 시간별·요일별 예보를 제공합니다.
+        </p>
+      </div>
+    </div>
+
+    <!-- ====================================== -->
+    <!-- 1-1. 현재 날씨 -->
+    <!-- ====================================== -->
+
+    <!--
+      selection.js의 renderTodayWeather() 함수가
+      현재 기온, 습도, 풍속, 강수량을 표시합니다.
+    -->
+    <div
+      id="todayWeather"
+      class="today-weather-content"
+      aria-live="polite">
+
+      <p class="empty-state">
+        현재 날씨를 불러오고 있습니다.
+      </p>
+
+    </div>
+
+    <!-- ====================================== -->
+    <!-- 1-2. 요일별 날씨 예보 -->
+    <!-- ====================================== -->
+
+    <div class="forecast-section">
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">7-DAY FORECAST</p>
+          <h3>요일별 날씨</h3>
+
+          <p class="section-note">
+            오늘부터 7일간의 최고·최저기온과 날씨
+          </p>
+        </div>
+      </div>
+
+      <!--
+        JavaScript의 renderWeeklyForecast() 함수가
+        7일간의 예보 카드를 자동으로 생성합니다.
+      -->
+      <div
+        id="weeklyForecast"
+        class="forecast-grid"
+        aria-live="polite">
+
+        <p class="empty-state">
+          요일별 날씨를 불러오고 있습니다.
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- ====================================== -->
+    <!-- 1-3. 1시간 간격 날씨 예보 -->
+    <!-- ====================================== -->
+
+    <div class="forecast-section">
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">HOURLY FORECAST</p>
+          <h3>시간별 날씨</h3>
+
+          <p class="section-note">
+            현재부터 1시간 간격으로 12시간 예보
+          </p>
+        </div>
+      </div>
+
+      <!--
+        JavaScript의 renderHourlyForecast() 함수가
+        1시간 간격의 기온과 강수확률을 표시합니다.
+      -->
+      <div
+        id="hourlyForecast"
+        class="forecast-grid"
+        aria-live="polite">
+
+        <p class="empty-state">
+          시간별 날씨를 불러오고 있습니다.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+  <!-- 오늘의 날씨 영역 끝 -->
+
+
+  <!-- ====================================== -->
+  <!-- 2. 뉴스와 오른쪽 정보 영역 -->
+  <!-- ====================================== -->
+  <div class="portal-layout">
+
+    <!-- ====================================== -->
+    <!-- 2-1. 왼쪽 뉴스 영역 -->
+    <!-- ====================================== -->
+    <div class="main-column">
+
+      <!-- 메인 뉴스 -->
+      <article
+        id="heroArticle"
+        class="hero-article">
+
+        <div class="hero-overlay">
+
+          <span class="category-label">
+            TOP WEATHER STORY
+          </span>
+
+          <h2>
+            최신 날씨 뉴스를 불러오고 있습니다.
+          </h2>
+
+          <p>
+            전국 기상 데이터를 기반으로 주요 소식을 제공합니다.
+          </p>
+
+        </div>
+
+      </article>
+
+      <!-- 최신 날씨 뉴스 -->
+      <section class="panel news-panel">
+
+        <div class="section-heading">
+
+          <div>
+            <p class="eyebrow">LATEST REPORTS</p>
+            <h2>최신 날씨 뉴스</h2>
+          </div>
+
+          <!-- 선택한 지역의 뉴스 생성 버튼 -->
+          <button
+            id="generateNewsButton"
+            class="primary-button"
+            type="button">
+
+            + 선택 지역 뉴스 생성
+
+          </button>
+
+        </div>
+
+        <!-- JavaScript가 뉴스 목록을 표시 -->
+        <div id="newsList" class="news-list">
+
+          <p class="empty-state">
+            뉴스를 불러오는 중입니다.
+          </p>
+
+        </div>
+
+      </section>
+
+    </div>
+    <!-- 왼쪽 뉴스 영역 끝 -->
+
+
+    <!-- ====================================== -->
+    <!-- 2-2. 오른쪽 사이드바 -->
+    <!-- ====================================== -->
+    <aside class="sidebar">
+
+      <!-- 지역 날씨 -->
+      <section class="panel">
+
+        <div class="section-heading">
+          <h2>지역 날씨 현황</h2>
+        </div>
+
+        <div
+          id="sidebarWeather"
+          class="weather-summary">
+
+          <p class="empty-state">
+            날씨 데이터 대기 중
+          </p>
+
+        </div>
+
+      </section>
+
+      <!-- 대기질 현황 -->
+      <section class="panel">
+
+        <div class="section-heading">
+          <h2>대기질 현황</h2>
+        </div>
+
+        <!-- PM10 / PM2.5 표시 -->
+        <div
+          id="sidebarAir"
+          class="sidebar-list">
+
+          <p class="empty-state">
+            대기질 정보를 불러오는 중입니다.
+          </p>
+
+        </div>
+
+      </section>
+
+      <!-- 기상 위험 정보 -->
+      <section class="panel">
+
+        <div class="section-heading">
+          <h2>기상 위험 정보</h2>
+        </div>
+
+        <div
+          id="sidebarEvents"
+          class="sidebar-list">
+
+          <p class="empty-state">
+            기상 위험 정보를 불러오는 중입니다.
+          </p>
+
+        </div>
+
+      </section>
+
+    </aside>
+    <!-- 오른쪽 사이드바 끝 -->
+
+  </div>
+  <!-- 뉴스와 사이드바 영역 끝 -->
+
+</section>
+<!-- 홈 화면 끝 -->
+
+
+    <!-- ========================================
+         4. 전국 날씨 화면
+    ======================================== -->
+    <section id="weatherView" class="view hidden">
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">NATIONAL WEATHER</p>
+
+          <h2>전국 실시간 날씨 현황</h2>
+
+          <p class="section-note">
+            지역을 선택하여 기온, 습도, 풍속, 강수량을 확인하세요.
+          </p>
+        </div>
+      </div>
+
+      <!-- 지역별 기온, 습도, 풍속, 강수량 -->
+      <div
+        id="weatherGrid"
+        class="weather-grid">
+      </div>
+
+      <!-- 지역별 미세먼지 -->
+      <section class="panel air-quality-panel">
+
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">AIR QUALITY</p>
+            <h2>지역별 미세먼지 현황</h2>
+
+            <p class="section-note">
+              미세먼지(PM10) 및 초미세먼지(PM2.5)
+            </p>
+          </div>
+        </div>
+
+        <div
+          id="airGrid"
+          class="air-grid">
+        </div>
+
+      </section>
+
+    </section>
+
+    <!-- ========================================
+         5. 기상특보 화면
+    ======================================== -->
+    <section id="eventsView" class="view hidden">
+
+      <div class="section-heading">
+
+        <div>
+          <p class="eyebrow">WEATHER ALERT</p>
+
+          <h2>전국 기상 위험 현황</h2>
+
+          <span class="section-note">
+            관측 데이터 기반 자체 기상 위험 분석
+          </span>
+        </div>
+
+        <button
+          id="analyzeWeatherButton"
+          class="primary-button"
+          type="button">
+          ⚠ 기상 위험 다시 분석
+        </button>
+
+      </div>
+
+      <!-- 위험 요약 카드 -->
+      <div
+        id="riskSummary"
+        class="risk-summary">
+      </div>
+
+      <!-- 지역별 위험 정보 -->
+      <div
+        id="eventsList"
+        class="event-grid">
+      </div>
+
+    </section>
+
+    <!-- ========================================
+         6. 기후 분석 화면
+    ======================================== -->
+    <section id="climateView" class="view hidden">
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">CLIMATE ANALYSIS</p>
+
+          <h2>지역별 기후변화 분석</h2>
+
+          <span class="section-note">
+            연도별 기후변화 추이 및 2026년 현재까지의 분석
+          </span>
+        </div>
+      </div>
+
+      <div class="panel climate-panel">
+
+        <div class="chart-toolbar">
+
+          <label for="chartSelect">분석 항목</label>
+
+          <select id="chartSelect">
+            <option value="temperature">연평균 기온</option>
+            <option value="rainfall">연간 강수량</option>
+            <option value="heatwave">폭염일수</option>
+          </select>
+
+        </div>
+
+        <p id="climateSummary" class="section-note">
+          분석할 지역을 선택하세요.
+        </p>
+
+        <div
+          id="chartContainer"
+          class="chart-container">
+
+          <canvas
+            id="weatherChart"
+            aria-label="지역별 기후변화 그래프"
+            role="img">
+          </canvas>
+
+        </div>
+
+        <p class="section-note">
+          ※ 2026년 데이터가 제공되는 경우,
+          연간 확정 통계가 아닌 현재까지의 잠정값으로 표시해야 합니다.
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       7. 기사 상세 모달
+  ========================================== -->
+  <div
+    id="articleModal"
+    class="modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="articleTitle">
+
+    <div
+      class="modal-backdrop"
+      data-close-modal>
+    </div>
+
+    <article class="modal-content">
+
+      <button
+        id="closeModalButton"
+        class="modal-close"
+        aria-label="닫기"
+        type="button">
+        ✕
+      </button>
+
+      <span class="category-label">
+        WEATHER NEWS REPORT
+      </span>
+
+      <h2 id="articleTitle"></h2>
+
+      <p
+        id="articleMeta"
+        class="article-meta">
+      </p>
+
+      <div
+        id="articleBody"
+        class="article-body">
+      </div>
+
+    </article>
+
+  </div>
+
+  <!-- ==========================================
+       8. 푸터
+  ========================================== -->
+  <footer class="site-footer">
+
+    <div class="container footer-inner">
+
+      <div>
+        <strong>KOREA WEATHER NEWS</strong>
+
+        <p>
+          전국 날씨와 기후 정보를 전하는 데이터 기반 뉴스 포털
+        </p>
+      </div>
+
+      <p>
+        관측 데이터를 바탕으로 생성된 뉴스이며,
+        공식 기상특보 및 예보를 대신하지 않습니다.
+      </p>
+
+    </div>
+
+  </footer>
+
+</body>
+
+</html>

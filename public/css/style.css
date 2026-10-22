@@ -1,0 +1,981 @@
+
+:root {
+  --bg: #0b1424;
+  --header: #0e1a2e;
+  --panel: #15243a;
+  --panel-hover: #1b2e49;
+  --border: #293b55;
+  --text: #edf4ff;
+  --muted: #9eafc6;
+  --accent: #38bdf8;
+  --accent-dark: #075985;
+  --warning: #fbbf24;
+  --danger: #fb7185;
+  --success: #4ade80;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Pretendard", "Noto Sans KR",
+    "Malgun Gothic", Arial, sans-serif;
+  line-height: 1.6;
+}
+
+button, select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+button:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.container {
+  width: min(1280px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Header */
+.site-header {
+  background: var(--header);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 92px;
+  gap: 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-icon {
+  display: grid;
+  place-items: center;
+  width: 49px;
+  height: 49px;
+  border-radius: 13px;
+  background: #10395b;
+  color: var(--accent);
+  font-size: 28px;
+}
+
+.brand strong {
+  display: block;
+  font-size: 20px;
+  letter-spacing: .8px;
+}
+
+.brand small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.live-status {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.live-status.offline {
+  color: var(--danger);
+}
+
+.main-nav {
+  border-top: 1px solid var(--border);
+}
+
+.nav-inner {
+  display: flex;
+  gap: 26px;
+  overflow-x: auto;
+}
+
+.nav-link {
+  flex-shrink: 0;
+  padding: 16px 3px;
+  background: none;
+  color: var(--muted);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  font-weight: 700;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+/* Layout */
+.main-content {
+  padding-top: 24px;
+  padding-bottom: 70px;
+}
+
+.ticker {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 15px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #12243c;
+}
+
+.ticker-label {
+  flex-shrink: 0;
+  color: #061523;
+  background: var(--accent);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.ticker p {
+  flex: 1;
+  margin: 0;
+  font-size: 13px;
+  color: #c7d7eb;
+}
+
+.ticker-refresh {
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+  margin: 35px 0 25px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.page-heading h1 {
+  margin: 0;
+  font-size: clamp(26px, 3vw, 36px);
+}
+
+.page-heading p:not(.eyebrow) {
+  color: var(--muted);
+  margin: 7px 0 0;
+  font-size: 14px;
+}
+
+.region-control {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 190px;
+}
+
+.region-control label,
+.chart-toolbar label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+select {
+  width: 100%;
+  padding: 11px 14px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.portal-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(280px, 1fr);
+  gap: 24px;
+}
+
+.main-column,
+.sidebar {
+  min-width: 0;
+}
+
+.main-column,
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 23px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.section-note {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Main article */
+.hero-article {
+  position: relative;
+  display: flex;
+  align-items: end;
+  min-height: 345px;
+  overflow: hidden;
+  border: 1px solid #275078;
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 75% 20%, #21527c 0%, transparent 36%),
+    linear-gradient(125deg, #172d4b, #0c1729 75%);
+}
+
+.hero-article::before {
+  content: "☁";
+  position: absolute;
+  right: 45px;
+  top: 10px;
+  font-size: 180px;
+  line-height: 1;
+  color: rgba(125, 211, 252, .14);
+}
+
+.hero-overlay {
+  position: relative;
+  width: 100%;
+  padding: 35px;
+  background: linear-gradient(transparent, rgba(3, 11, 24, .85));
+}
+
+.category-label {
+  display: inline-block;
+  color: #7dd3fc;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.3px;
+}
+
+.hero-overlay h2 {
+  max-width: 600px;
+  margin: 13px 0;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.35;
+}
+
+.hero-overlay p {
+  color: #cbd5e1;
+  font-size: 14px;
+  max-width: 580px;
+}
+
+/* News */
+.primary-button {
+  padding: 10px 14px;
+  background: var(--accent);
+  color: #061523;
+  border: 0;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.primary-button:hover {
+  background: #7dd3fc;
+}
+
+.news-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 18px 0;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+
+.news-item:last-child {
+  border-bottom: 0;
+}
+
+.news-item:hover .news-title {
+  color: var(--accent);
+}
+
+.news-category {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.news-title {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.news-preview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.news-meta {
+  display: block;
+  margin-top: 10px;
+  font-size: 11px;
+  color: #8197b3;
+}
+
+/* Weather cards */
+.weather-grid,
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.weather-card,
+.event-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: transform .2s, border-color .2s;
+}
+
+.weather-card:hover,
+.event-card:hover {
+  transform: translateY(-3px);
+  border-color: #3575a5;
+}
+
+.card-region {
+  margin: 0 0 12px;
+  font-weight: 800;
+  font-size: 17px;
+}
+
+.card-value {
+  font-size: 32px;
+  font-weight: 900;
+  color: #7dd3fc;
+}
+
+.card-details {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 2;
+}
+
+.weather-summary .summary-temperature {
+  margin: 8px 0;
+  font-size: 39px;
+  font-weight: 900;
+  color: #7dd3fc;
+}
+
+.summary-region {
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.summary-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.sidebar-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.sidebar-item:last-child {
+  border-bottom: 0;
+}
+
+.sidebar-item strong {
+  display: block;
+  margin-bottom: 3px;
+}
+
+.sidebar-item span {
+  color: var(--muted);
+}
+
+.severity {
+  display: inline-block;
+  padding: 3px 7px;
+  border-radius: 5px;
+  background: #493b1f;
+  color: var(--warning);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.severity.danger {
+  background: #4a2434;
+  color: #fda4af;
+}
+
+/* Chart */
+.climate-panel {
+  min-height: 480px;
+}
+
+.chart-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.chart-toolbar select {
+  max-width: 230px;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 360px;
+}
+
+.empty-state {
+  padding: 20px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.loading-box,
+.error-box {
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 9px;
+}
+
+.loading-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #172b43;
+  color: #b9d5e9;
+}
+
+.spinner {
+  width: 19px;
+  height: 19px;
+  border: 2px solid #45627e;
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-box {
+  background: #3a1e2c;
+  border: 1px solid #7f304b;
+  color: #fecdd3;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .8);
+}
+
+.modal-content {
+  position: relative;
+  width: min(750px, 100%);
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 35px;
+  background: #14243a;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.modal-content h2 {
+  font-size: 27px;
+  line-height: 1.4;
+}
+
+.modal-close {
+  position: absolute;
+  right: 18px;
+  top: 15px;
+  background: transparent;
+  border: 0;
+  color: white;
+  font-size: 21px;
+}
+
+.article-meta {
+  color: var(--muted);
+  font-size: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.article-body {
+  white-space: pre-wrap;
+  line-height: 2;
+  color: #dbe7f7;
+}
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid var(--border);
+  background: #0a1220;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  padding: 30px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.footer-inner strong {
+  color: var(--text);
+}
+
+.footer-inner p {
+  max-width: 440px;
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+  .portal-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .weather-grid,
+  .event-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    width: min(100% - 24px, 1280px);
+  }
+
+  .header-inner {
+    min-height: 75px;
+  }
+
+  .brand strong {
+    font-size: 14px;
+  }
+
+  .brand-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .header-time {
+    display: none;
+  }
+
+  .nav-inner {
+    gap: 18px;
+  }
+
+  .page-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .region-control {
+    width: 100%;
+  }
+
+  .ticker {
+    flex-wrap: wrap;
+  }
+
+  .ticker p {
+    flex-basis: 65%;
+  }
+
+  .hero-article {
+    min-height: 290px;
+  }
+
+  .hero-overlay {
+    padding: 23px;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  .sidebar,
+  .weather-grid,
+  .event-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+  }
+
+  .modal-content {
+    padding: 25px 18px;
+  }
+
+  .modal-content h2 {
+    font-size: 21px;
+  }
+}
+
+/* 기상 위험 요약 */
+
+.risk-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.risk-summary-card {
+    background: #15243a;
+    border: 1px solid #293b55;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.risk-summary-card span {
+    color: #9eafc6;
+    font-size: 13px;
+}
+
+.risk-summary-card strong {
+    color: #f8fafc;
+    font-size: 32px;
+}
+
+.risk-summary-card:nth-child(2) strong {
+    color: #fb7185;
+}
+
+.risk-summary-card:nth-child(3) strong {
+    color: #fbbf24;
+}
+
+@media (max-width: 640px) {
+    .risk-summary {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ================================
+   전국 미세먼지 화면 크기 조절
+================================ */
+
+/* 숨김 처리된 화면 내부의 미세먼지 영역도 숨김 */
+.hidden {
+    display: none !important;
+}
+
+/* 미세먼지 전체 영역 */
+.air-section {
+    width: 100%;
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* 미세먼지 카드 배치 */
+.air-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+/* 개별 미세먼지 카드 */
+.air-grid > * {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* 태블릿 화면 */
+@media (max-width: 900px) {
+    .air-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* 모바일 화면 */
+@media (max-width: 600px) {
+    .air-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .air-section {
+        padding: 15px;
+    }
+}
+
+/* 오늘의 날씨 */
+.today-weather-panel {
+    margin-bottom: 24px;
+}
+
+.today-weather-content {
+    padding: 24px;
+}
+
+.today-temperature {
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 800;
+    margin: 12px 0;
+}
+
+/* 전국 날씨 내부 미세먼지 */
+.air-quality-panel {
+    margin-top: 28px;
+}
+
+.air-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.air-grid > * {
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* 화면 전환 */
+.view.hidden,
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 900px) {
+    .air-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .air-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .today-weather-content {
+        padding: 16px;
+    }
+}
+
+/* ==========================================
+   요일별 날씨 + 시간별 날씨 디자인
+   ========================================== */
+
+/* 1. 예보 영역 전체 */
+.forecast-section {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #334155;
+}
+
+/* 2. 예보 카드 가로 정렬 */
+.forecast-grid {
+    display: flex;          /* 카드들을 가로로 배치 */
+    gap: 12px;              /* 카드 사이 간격 */
+    overflow-x: auto;       /* 카드가 많으면 가로 스크롤 */
+    padding: 12px 0;
+    margin-top: 12px;
+    margin-bottom: 16px;
+}
+
+/* 3. 각각의 날씨 카드 */
+.forecast-card {
+    flex: 0 0 115px;        /* 카드 너비 115px로 고정 */
+    min-height: 135px;      /* 최소 높이 */
+    padding: 16px 10px;
+
+    background: #1e293b;   /* 카드 배경 */
+    border: 1px solid #334155;
+    border-radius: 14px;
+
+    color: #ffffff;
+
+    display: flex;
+    flex-direction: column; /* 내용을 위에서 아래로 정렬 */
+    align-items: center;    /* 가로 중앙 정렬 */
+    justify-content: center;/* 세로 중앙 정렬 */
+    gap: 10px;
+    text-align: center;
+}
+
+/* 4. 날씨 아이콘 */
+.forecast-icon {
+    font-size: 30px;
+    line-height: 1.2;
+}
+
+/* 5. 강수확률 */
+.forecast-card small {
+    color: #93c5fd;
+    font-size: 12px;
+}
+
+/* 6. 카드에 마우스를 올렸을 때 */
+.forecast-card:hover {
+    background: #26364d;
+    transform: translateY(-3px);
+    transition: 0.2s;
+}
+
+/* 7. 모바일 화면 디자인 */
+@media (max-width: 768px) {
+
+    .forecast-grid {
+        gap: 8px;
+    }
+
+    .forecast-card {
+        flex-basis: 100px;
+        min-height: 125px;
+        padding: 12px 8px;
+    }
+
+    .forecast-icon {
+        font-size: 26px;
+    }
+}
+
+/* 오늘의 날씨 영역 내부 간격 */
+.today-weather-panel {
+    padding: 24px;
+}
+
+/* 현재 날씨 영역의 불필요한 최소 높이 해제 */
+.today-weather-panel .today-weather-content {
+    min-height: 0;
+    height: auto;
+}
+
+/* 예보 영역 간격 */
+.today-weather-panel .forecast-section {
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+/* 예보 카드 정렬 */
+.today-weather-panel .forecast-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 12px 0;
+}
