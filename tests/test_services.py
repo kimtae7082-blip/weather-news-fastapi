@@ -27,6 +27,11 @@ with patch.dict(sys.modules, {'httpx': httpx, 'pymysql': pymysql, 'dotenv': dote
     air = importlib.import_module('services.air')
     climate = importlib.import_module('services.climate')
     news = importlib.import_module('services.news')
+    ai_news = importlib.import_module('services.ai_news')
+
+sys.modules['services.ai_news'] = ai_news
+import services
+services.ai_news = ai_news
 
 
 class RulesTests(unittest.TestCase):
@@ -86,10 +91,13 @@ class RulesTests(unittest.TestCase):
 
     def test_news_generation_uses_observations(self):
         with patch.object(news, 'observations', return_value=[{
-            'region_name': '서울', 'temperature': 20, 'weather_status': '맑음'}]), \
-             patch.object(news, 'create', return_value={'id': 1}) as create:
-            self.assertEqual(news.generate(), {'generatedCount': 1, 'data': [{'id': 1}]})
-            create.assert_called_once_with('서울', 20, '맑음')
+            'region_id': 1, 'region_name': '서울', 'temperature': 20, 'weather_status': '맑음'}]), \
+             patch('services.ai_news.configuration'), \
+             patch('services.ai_news.generate_observation',
+                   return_value={'id': 1, 'already_exists': False}) as create:
+            result = news.generate(region_ids={1})
+            self.assertEqual(result['generatedCount'], 1)
+            create.assert_called_once()
 
 
 class OfflineLoop(asyncio.SelectorEventLoop):
@@ -178,3 +186,4 @@ class AsyncTests(unittest.IsolatedAsyncioTestCase):
 
 if __name__ == '__main__':
     unittest.main()
+

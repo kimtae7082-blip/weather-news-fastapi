@@ -1,4 +1,4 @@
-# 관측값을 정해진 문장 틀에 넣어 뉴스 초안을 저장합니다. 생성형 AI 호출은 없습니다.
+# 수동 등록은 문장 틀, 자동 생성은 OpenAI 기사 초안을 사용합니다.
 from database.connection import db,query
 from services.weather import observations,status
 
@@ -22,11 +22,21 @@ def create(region,temp,weather_status,warning_type='없음'):
     # 목록은 30건이므로 동시 생성이 많을 때 해당 행을 찾지 못할 가능성이 있습니다.
     return next(x for x in list_news() if x['id']==nid)
 
-# 지역별로 create를 호출해 각각 저장합니다. 전체 생성이 하나의 트랜잭션은 아닙니다.
-# 반복 실행하면 새 뉴스가 추가되며 기본 warning_type은 '없음'입니다.
-def generate():
-    created=[]
-    for o in observations():
-        created.append(create(o['region_name'],o['temperature'],o['weather_status']))
-    return {'generatedCount':len(created),'data':created}
+# 웹 버튼과 자동 실행이 같은 OpenAI 생성 경로를 사용한다.
+def generate(region_ids=None):
+    from services.ai_news import configuration, generate_observation
+    configuration()
+    created, failed = [], []
+    for observation in observations():
+        if region_ids is not None and observation['region_id'] not in region_ids:
+            continue
+        try:
+            created.append(generate_observation(observation))
+        except Exception:
+            # 키나 DB 접속 정보가 포함될 수 있는 원래 예외는 응답에 노출하지 않는다.
+            failed.append({'region_id': observation['region_id'],
+                           'message': '기사 생성 실패. 설정·관측 시각·서비스 상태를 확인하세요.'})
+    return {'generatedCount': sum(not x['already_exists'] for x in created),
+            'existingCount': sum(x['already_exists'] for x in created),
+            'failedCount': len(failed), 'errors': failed, 'data': created}
 

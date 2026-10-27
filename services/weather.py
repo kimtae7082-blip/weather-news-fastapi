@@ -28,7 +28,7 @@ async def collect():
     key=os.getenv('OPENWEATHER_API_KEY')
     if not key or key=='YOUR_OPENWEATHER_KEY':raise ValueError('OPENWEATHER_API_KEY를 .env에 입력하세요.')
     # 지역 하나가 실패해도 나머지는 계속 수집하며 errors에 실패 이유를 남깁니다.
-    results={'insertedCount':0,'skippedCount':0,'failedCount':0,'errors':[]}
+    results={'insertedCount':0,'skippedCount':0,'failedCount':0,'errors':[],'collectedRegionIds':[]}
     async with httpx.AsyncClient(timeout=20) as client:
         for r in regions():
             try:
@@ -48,6 +48,7 @@ async def collect():
                         # rowcount==1만 신규 삽입으로 셉니다.
                         # skippedCount에는 실제 갱신된 행도 포함될 수 있으므로 '미수집 수'가 아닙니다.
                         results['insertedCount' if cur.rowcount==1 else 'skippedCount']+=1
+                results['collectedRegionIds'].append(r['region_id'])
             except Exception as exc:
                 results['failedCount']+=1;results['errors'].append(f"{r['region_name']}: {exc}")
     return results
@@ -78,4 +79,5 @@ def analyze():
 # 최근 생성된 이벤트 최대 50건입니다. 현재 유효한 공식 특보 목록이 아닙니다.
 def events():
     return query("""SELECT e.event_id,e.region_id,r.region_name,e.event_type,e.severity_level,e.description,e.created_at FROM weather_event e JOIN region r ON r.region_id=e.region_id ORDER BY e.created_at DESC LIMIT 50""")
+
 

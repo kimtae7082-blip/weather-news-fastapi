@@ -247,35 +247,13 @@ def generate_region_news(region_id: int):
         )
 
     try:
-        # 기존 뉴스 자동 생성 함수 실행
-        generation_result = news.generate()
-
-        # 생성 후 해당 지역의 뉴스 조회
-        region_news = query(
-            """
-            SELECT
-                id,
-                region_id,
-                temp,
-                weather_status,
-                warning_type,
-                news_title,
-                news_content,
-                created_at
-            FROM weather_news
-            WHERE region_id = %s
-            ORDER BY created_at DESC
-            LIMIT 1
-            """,
-            (region_id,)
-        )
-
-        return ok(
-            region_news,
-            message="뉴스 생성 요청이 처리되었습니다.",
-            region_id=region_id,
-            generation_result=generation_result
-        )
+        result = news.generate(region_ids={region_id})
+        if result['failedCount']:
+            raise HTTPException(status_code=502, detail='기사 생성 실패. API 설정과 관측 시각을 확인하세요.')
+        if not result['data']:
+            raise HTTPException(status_code=404, detail='최신 날씨 관측이 없습니다. 먼저 날씨를 수집하세요.')
+        return ok(result['data'], already_exists=bool(result['existingCount']),
+                  region_id=region_id, generation_result=result)
 
     except ValueError as exc:
         raise HTTPException(
@@ -294,3 +272,4 @@ def generate_region_news(region_id: int):
 )
 def chrome_devtools():
     return Response(status_code=204)
+
